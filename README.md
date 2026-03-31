@@ -73,7 +73,7 @@ Create a `.env` file inside the `backend` folder:
 GROQ_API_KEY=your_groq_key_here
 ```
 
-Get a free API key from [console.groq.com](https://console.groq.com) — no credit card needed.
+Get a free API key from [console.groq.com](https://console.groq.com) (no credit card needed).
 
 Start the server:
 ```bash
