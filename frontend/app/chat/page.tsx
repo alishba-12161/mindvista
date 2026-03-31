@@ -1,9 +1,9 @@
 "use client";
+
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
-import { askQuestion, resetKnowledge, getStatus } from "@/lib/api";
-
+import { askQuestionStream, resetKnowledge, getStatus } from "@/lib/api";
 interface Message {
   role: "user" | "assistant";
   content: string;
@@ -35,12 +35,26 @@ export default function ChatPage() {
     setError("");
     setMessages((prev) => [...prev, { role: "user", content: q }]);
     setLoading(true);
+
     try {
-      const res = await askQuestion(q);
-      setMessages((prev) => [...prev, { role: "assistant", content: res.answer, chunks: res.retrieved_chunks }]);
+      setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
+
+      await askQuestionStream(q, (token) => {
+        setMessages((prev) => {
+          const updated = [...prev];
+          const last = updated[updated.length - 1];
+          if (last.role === "assistant") {
+            updated[updated.length - 1] = {
+              ...last,
+              content: last.content + token,
+            };
+          }
+          return updated;
+        });
+      });
     } catch (err: any) {
-      setError(err?.response?.data?.detail ?? "Request failed. Please try again.");
-      setMessages((prev) => prev.slice(0, -1));
+      setError("Request failed. Please try again.");
+      setMessages((prev) => prev.slice(0, -2));
     } finally {
       setLoading(false);
       inputRef.current?.focus();

@@ -125,3 +125,45 @@ def status() -> dict:
         "indexed": _index is not None,
         "chunk_count": len(_chunks),
     }
+
+def answer_stream(question: str):
+    """
+    Same as answer() but yields text chunks as they stream from Groq.
+    """
+    relevant = retrieve(question)
+
+    if not relevant:
+        yield "I don't have enough information to answer that."
+        return
+
+    context = "\n\n---\n\n".join(chunk for chunk, _ in relevant)
+
+    prompt = f"""You are a precise question-answering assistant.
+Answer the user's question using ONLY the context provided below.
+If the answer cannot be determined from the context, respond with exactly:
+"I don't have enough information to answer that."
+Do not add external knowledge or speculation.
+
+<context>
+{context}
+</context>
+
+Question: {question}
+Answer:"""
+
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key:
+        raise EnvironmentError("GROQ_API_KEY is not set.")
+
+    client = Groq(api_key=api_key)
+    stream = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=1024,
+        stream=True,
+    )
+
+    for chunk in stream:
+        delta = chunk.choices[0].delta.content
+        if delta:
+            yield delta

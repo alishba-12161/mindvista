@@ -43,7 +43,7 @@ export default function IngestPage() {
           </div>
           <h1 className="text-4xl font-bold text-white tracking-tight">Knowledge Base</h1>
           <p className="mt-3 text-sm text-slate-400 leading-relaxed">
-            Paste your content below. The AI answers strictly from this material — nothing else.
+            Paste your content below. The AI answers only from your uploaded material!
           </p>
         </div>
 

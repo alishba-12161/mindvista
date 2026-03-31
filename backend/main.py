@@ -1,3 +1,4 @@
+from fastapi.responses import StreamingResponse
 """
 MindVista – FastAPI backend
 """
@@ -135,3 +136,25 @@ def reset():
     """Clear all indexed content."""
     rag.reset()
     return {"message": "Knowledge base cleared."}
+
+@app.post("/ask-stream")
+def ask_stream(body: AskRequest):
+    """
+    Stream the answer token by token using Server-Sent Events.
+    """
+    if not body.question.strip():
+        raise HTTPException(status_code=400, detail="Question cannot be empty.")
+
+    status = rag.status()
+    if not status["indexed"]:
+        raise HTTPException(status_code=400, detail="No content has been ingested yet.")
+
+    def event_stream():
+        try:
+            for token in rag.answer_stream(body.question):
+                yield f"data: {token}\n\n"
+        except Exception as e:
+            yield f"data: [ERROR] {str(e)}\n\n"
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")
