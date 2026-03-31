@@ -10,9 +10,9 @@ Built as part of a technical assessment for the Associate Software Engineer (AI/
 
 - **Frontend:** Next.js 14, React 18, Tailwind CSS
 - **Backend:** Python 3.11, FastAPI
-- **Embeddings:** `sentence-transformers` — `all-MiniLM-L6-v2` (runs fully locally)
+- **Embeddings:** `sentence-transformers`: `all-MiniLM-L6-v2` (runs fully locally)
 - **Vector Search:** FAISS (in-memory, cosine similarity)
-- **LLM:** Groq API — `llama-3.3-70b-versatile` (free tier)
+- **LLM:** Groq API: `llama-3.3-70b-versatile` (free tier)
 
 ---
 
@@ -20,13 +20,13 @@ Built as part of a technical assessment for the Associate Software Engineer (AI/
 
 This project implements a basic RAG (Retrieval-Augmented Generation) pipeline:
 
-1. **Ingest** — Your content is split into 500-word overlapping chunks. Each chunk gets embedded into a 384-dimensional vector using `all-MiniLM-L6-v2` and stored in a FAISS index.
+1. **Ingest**:  Your content is split into 500-word overlapping chunks. Each chunk gets embedded into a 384-dimensional vector using `all-MiniLM-L6-v2` and stored in a FAISS index.
 
-2. **Retrieve** — When you ask a question, it gets embedded with the same model. FAISS finds the top-4 most semantically similar chunks using cosine similarity.
+2. **Retrieve**:  When you ask a question, it gets embedded with the same model. FAISS finds the top-4 most semantically similar chunks using cosine similarity.
 
-3. **Generate** — The retrieved chunks are passed to Groq's LLM with a strict prompt: answer only from the context provided, nothing else.
+3. **Generate**:  The retrieved chunks are passed to Groq's LLM with a strict prompt: answer only from the context provided, nothing else.
 
-4. **Fallback** — If no chunks score above the similarity threshold (0.25), the system responds with `"I don't have enough information to answer that."` — without even calling the LLM.
+4. **Fallback**:  If no chunks score above the similarity threshold (0.25), the system responds with `"I don't have enough information to answer that."` (without even calling the LLM)
 
 ---
 
