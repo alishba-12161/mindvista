@@ -1,6 +1,6 @@
 # MindVista – Smart AI Support Assistant
 
-MindVista is a full-stack web application that lets you upload any text content and instantly chat with an AI that answers questions strictly based on what you provided — no hallucinations, no external knowledge.
+MindVista is a full-stack web application that lets you upload any text content and instantly chat with an AI that answers questions strictly based on what you provided (no hallucinations, no external knowledge).
 
 Built as part of a technical assessment for the Associate Software Engineer (AI/ML + MERN) role.
 
